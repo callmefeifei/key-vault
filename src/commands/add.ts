@@ -20,7 +20,10 @@ export function registerAdd(program: Command): void {
     .command("add [name]")
     .description("添加凭据")
     .option("--type <type>", "凭据类型 (aksk/token/password/custom)")
-    .action(async (nameArg?: string, opts?: { type?: string }) => {
+    .option("--field <fields...>", "非交互模式字段 key=value（可多个）")
+    .option("--tags <tags>", "标签（逗号分隔）")
+    .option("--note <note>", "备注")
+    .action(async (nameArg?: string, opts?: { type?: string; field?: string[]; tags?: string; note?: string }) => {
       const { vaultDir } = resolveVault();
       const password = await requirePassword(vaultDir);
       const config = readVaultConfig(vaultDir);
@@ -30,12 +33,50 @@ export function registerAdd(program: Command): void {
         config.pbkdf2Iterations,
       );
 
-      const name = nameArg || (await readLine("凭据名称: "));
+      const name = nameArg || (process.stdin.isTTY ? await readLine("凭据名称: ") : "");
       if (!name) {
         console.error("名称不能为空");
         process.exit(1);
       }
 
+      // Non-interactive mode: --field key=value
+      if (opts?.field && opts.field.length > 0) {
+        const type: CredentialType = (opts.type && VALID_TYPES.includes(opts.type as CredentialType))
+          ? opts.type as CredentialType : "custom";
+
+        const fields: Record<string, string> = {};
+        for (const f of opts.field) {
+          const eqIdx = f.indexOf("=");
+          if (eqIdx === -1) {
+            console.error(`字段格式错误: ${f}（应为 key=value）`);
+            process.exit(1);
+          }
+          fields[f.slice(0, eqIdx)] = f.slice(eqIdx + 1);
+        }
+
+        const tags = opts.tags
+          ? opts.tags.split(/[,，\s]+/).filter(Boolean)
+          : suggestTags(name);
+
+        const now = new Date().toISOString();
+        const entry: CredentialEntry = {
+          id: crypto.randomUUID(),
+          name,
+          type,
+          tags,
+          fields,
+          createdAt: now,
+          updatedAt: now,
+          ...(opts.note ? { note: opts.note } : {}),
+        };
+
+        entries.push(entry);
+        await saveEntries(vaultDir, entries, password, config.pbkdf2Iterations);
+        console.log(`凭据已添加: ${name} [${type}]`);
+        return;
+      }
+
+      // Interactive mode
       const similar = findSimilarNames(entries, name);
       if (similar.length > 0) {
         console.log(`已存在相似凭据: ${similar.join(", ")}`);
