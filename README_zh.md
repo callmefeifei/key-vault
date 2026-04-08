@@ -7,7 +7,7 @@
 ## 安装
 
 ```bash
-npm install -g https://github.com/callmefeifei/key-vault.git
+git clone https://github.com/callmefeifei/key-vault.git /tmp/key-vault && npm i -g /tmp/key-vault && rm -rf /tmp/key-vault
 ```
 
 ## 快速开始

@@ -5,7 +5,7 @@ Universal AI Agent credential vault — securely store and retrieve credentials.
 ## Install
 
 ```bash
-npm i -g https://github.com/callmefeifei/key-vault.git
+git clone https://github.com/callmefeifei/key-vault.git /tmp/key-vault && npm i -g /tmp/key-vault && rm -rf /tmp/key-vault
 ```
 
 ## Setup
