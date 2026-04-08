@@ -4,7 +4,6 @@
   "description": "Universal AI Agent credential vault",
   "type": "module",
   "bin": { "key-vault": "./bin/key-vault.mjs" },
-  "files": ["bin", "dist", "package.json"],
   "scripts": {
     "build": "tsc",
     "test": "tsx --test src/__tests__/*.test.ts src/vault-core/__tests__/*.test.ts",
