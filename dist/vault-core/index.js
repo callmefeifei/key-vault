@@ -1,0 +1,9 @@
+export { DEFAULT_VAULT_CONFIG, TYPE_FIELD_TEMPLATES, SALT_LEN, IV_LEN, AUTH_TAG_LEN, KEY_LEN } from "./types.js";
+export { encrypt, decrypt, deriveKey } from "./crypto.js";
+export { loadEntries, saveEntries, createEmptyStore, acquireLock, releaseLock } from "./store.js";
+export { readVaultConfig, writeVaultConfig, updateVaultConfig } from "./config.js";
+export { globalVaultDir, projectVaultDir, storePath, configPath, auditPath, lockPath, vaultExists, resolveVaultDir, ensureVaultDir, autoResolveVaultDir } from "./paths.js";
+export { searchEntries, suggestTags, findSimilarNames } from "./search.js";
+export { writeAuditLog } from "./audit.js";
+export { trackSensitiveValues, containsSensitiveValue, redactSensitiveValues, clearSensitiveValues } from "./sensitive.js";
+export { cachePassword, getCachedPassword, clearCacheForDir, clearCache, registerExitCleanup, getEnvPassword } from "./unlock.js";

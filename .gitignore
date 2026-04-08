@@ -1,4 +1,4 @@
 node_modules/
-dist/
+# dist/ is committed for direct git-based npm install
 *.tsbuildinfo
 .DS_Store
