@@ -2,6 +2,8 @@
 
 Universal AI Agent credential vault. Securely store and retrieve credentials for any AI coding assistant.
 
+README | [中文文档](README_zh.md)
+
 ## Install
 
 ```bash
