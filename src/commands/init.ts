@@ -6,6 +6,7 @@ import {
   createEmptyStore,
   writeVaultConfig,
   DEFAULT_VAULT_CONFIG,
+  getEnvPassword,
   type UnlockMode,
 } from "../vault-core/index.js";
 import { readPasswordWithConfirm, selectOption } from "../prompt.js";
@@ -15,7 +16,8 @@ export function registerInit(program: Command): void {
     .command("init")
     .description("初始化凭据库")
     .option("--dir <path>", "指定存储目录")
-    .action(async (opts: { dir?: string }) => {
+    .option("--unlock-mode <mode>", "解锁模式: session|timed|always", "session")
+    .action(async (opts: { dir?: string; unlockMode?: string }) => {
       const vaultDir = opts.dir || autoResolveVaultDir();
 
       if (vaultExists(vaultDir)) {
@@ -25,13 +27,26 @@ export function registerInit(program: Command): void {
 
       console.log(`将在 ${vaultDir} 初始化凭据库\n`);
 
-      const password = await readPasswordWithConfirm("设置主密码: ");
+      // Non-interactive: use KEY_VAULT_PASSWORD env var
+      const envPw = getEnvPassword();
+      let password: string;
+      let unlockMode: UnlockMode;
 
-      const unlockMode = (await selectOption("解锁模式:", [
-        { label: "session — 进程生命周期内缓存", value: "session" },
-        { label: "timed — 定时缓存（默认 30 分钟）", value: "timed" },
-        { label: "always — 每次都需要输入密码", value: "always" },
-      ])) as UnlockMode;
+      if (envPw) {
+        password = envPw;
+        unlockMode = (opts.unlockMode || "session") as UnlockMode;
+        console.log("使用环境变量 KEY_VAULT_PASSWORD 作为主密码");
+      } else if (!process.stdin.isTTY) {
+        console.error("非交互环境请设置 KEY_VAULT_PASSWORD 环境变量");
+        process.exit(1);
+      } else {
+        password = await readPasswordWithConfirm("设置主密码: ");
+        unlockMode = (await selectOption("解锁模式:", [
+          { label: "session — 进程生命周期内缓存", value: "session" },
+          { label: "timed — 定时缓存（默认 30 分钟）", value: "timed" },
+          { label: "always — 每次都需要输入密码", value: "always" },
+        ])) as UnlockMode;
+      }
 
       const config = { ...DEFAULT_VAULT_CONFIG, unlockMode };
 

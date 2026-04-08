@@ -10,11 +10,13 @@ git clone https://github.com/callmefeifei/key-vault.git /tmp/key-vault && cd /tm
 
 ## Setup
 
+Ask the user to set a master password, then run:
+
 ```bash
-key-vault init
+KEY_VAULT_PASSWORD="<user-provided-password>" key-vault init
 ```
 
-Interactive: sets master password. Required on first install.
+If the user prefers interactive setup, instruct them to run `key-vault init` in their terminal directly.
 
 ## Verify
 
