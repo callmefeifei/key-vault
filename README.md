@@ -7,7 +7,7 @@ README | [中文文档](README_zh.md)
 ## Install
 
 ```bash
-git clone https://github.com/callmefeifei/key-vault.git /tmp/key-vault && npm i -g /tmp/key-vault && rm -rf /tmp/key-vault
+git clone https://github.com/callmefeifei/key-vault.git /tmp/key-vault && cd /tmp/key-vault && npm install --omit=dev && npm i -g . && cd / && rm -rf /tmp/key-vault
 ```
 
 ## Quick Start
