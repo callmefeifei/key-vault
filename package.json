@@ -1,0 +1,22 @@
+{
+  "name": "key-vault",
+  "version": "1.0.0",
+  "description": "Universal AI Agent credential vault",
+  "type": "module",
+  "bin": { "key-vault": "./bin/key-vault.mjs" },
+  "files": ["bin", "dist", "package.json"],
+  "scripts": {
+    "build": "tsc",
+    "test": "tsx --test src/__tests__/*.test.ts src/vault-core/__tests__/*.test.ts",
+    "prepare": "tsc"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "commander": "^13.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}
